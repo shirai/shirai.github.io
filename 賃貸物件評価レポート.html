@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>フルリモートエンジニア向け 賃貸物件 最終評価レポート</title>
+    <style>
+        /* CSS reset & base */
+        :root {
+            --bg-color: #f3f4f6;
+            --text-main: #1f2937;
+            --text-light: #4b5563;
+            --primary: #2563eb;
+            --secondary: #3b82f6;
+            --white: #ffffff;
+            --border: #e5e7eb;
+            --gold: #fbbf24;
+            --silver: #9ca3af;
+            --bronze: #d97706;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /* モバイルファーストで左右マージンを極小に設定 */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 12px 4px; 
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            text-align: center;
+            color: var(--primary);
+            margin: 8px 4px 20px 4px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            margin: 28px 4px 12px 4px;
+            padding-left: 8px;
+            border-left: 4px solid var(--secondary);
+            color: var(--text-main);
+        }
+
+        /* セクション1: 基準 */
+        .criteria-box {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 0 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+        .criteria-list {
+            list-style-type: none;
+        }
+        .criteria-list li {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 8px;
+        }
+        .criteria-list li:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+        .tag-high { background-color: #fee2e2; color: #991b1b; }
+        .tag-mid { background-color: #dbeafe; color: #1e40af; }
+
+        /* セクション2: カードデザイン */
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 16px 12px;
+            margin: 0 4px 16px 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--border);
+        }
+        .rank-1 { border-top-color: var(--gold); }
+        .rank-2 { border-top-color: var(--silver); }
+        .rank-3 { border-top-color: var(--bronze); }
+        .rank-out { border-top-color: var(--danger); opacity: 0.95; }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+        .evaluation-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .eval-badge {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background-color: #f3f4f6;
+            border: 1px solid var(--border);
+            font-weight: bold;
+        }
+        .eval-s { background-color: #fef08a; border-color: #facc15; color: #854d0e; }
+        .eval-a { background-color: #bbf7d0; border-color: #4ade80; color: #166534; }
+        .eval-b { background-color: #bfdbfe; border-color: #60a5fa; color: #1e3a8a; }
+        .eval-out { background-color: #e5e7eb; border-color: #9ca3af; color: #374151; }
+
+        .property-data {
+            background-color: #f9fafb;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            border: 1px solid #f3f4f6;
+        }
+        .property-data ul {
+            list-style-type: none;
+        }
+        .property-data li {
+            margin-bottom: 6px;
+            display: flex;
+        }
+        .property-data li:last-child {
+            margin-bottom: 0;
+        }
+        .data-label {
+            font-weight: bold;
+            min-width: 65px;
+            color: var(--text-light);
+            flex-shrink: 0;
+        }
+
+        .comment {
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 12px;
+            background-color: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+        }
+        .btn:active {
+            opacity: 0.8;
+        }
+        .btn-out {
+            background-color: var(--white);
+            color: var(--text-light);
+            border: 1px solid var(--border);
+        }
+
+        /* セクション3: テーブル */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 0 4px;
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%;
+            min-width: 680px; /* スマホで縮まないための最小幅 */
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            text-align: left;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #f8fafc;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+        tr:last-child td { border-bottom: none; }
+        th:last-child, td:last-child { border-right: none; }
+        
+        .price-col { 
+            text-align: right; 
+            font-family: monospace; 
+            font-size: 0.9rem; 
+        }
+        .row-highlight { 
+            background-color: #fffbeb; 
+        }
+        .text-strong {
+            font-weight: bold;
+        }
+        .text-danger {
+            color: var(--danger);
+        }
+
+        /* セクション4: まとめ */
+        .summary-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px 12px;
+            margin: 0 4px 24px 4px;
+        }
+        .summary-box ul {
+            padding-left: 20px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+        .summary-box li {
+            margin-bottom: 12px;
+        }
+        .summary-box li:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>フルリモートエンジニア向け<br>賃貸物件 最終評価レポート</h1>
+
+    <!-- セクション1：評価の前提と絶対基準 -->
+    <h2>1. 評価の前提と絶対基準</h2>
+    <div class="criteria-box">
+        <ul class="criteria-list">
+            <li>
+                <span class="tag tag-high">特大</span>
+                <strong>1. 防音性能</strong><br>
+                同時会議でも干渉しないSRC造や最上階・角部屋を最重視
+            </li>
+            <li>
+                <span class="tag tag-high">特大</span>
+                <strong>2. 独立した2部屋の広さ</strong><br>
+                各部屋に「ベッド＋大型デスク」が置けるか（5帖以上必須）
+            </li>
+            <li>
+                <span class="tag tag-mid">大</span>
+                <strong>3. 東京駅・八重洲口への通勤</strong><br>
+                週1〜2回の最多出勤先へのアクセス
+            </li>
+            <li>
+                <span class="tag tag-mid">中</span>
+                <strong>4. 西新宿・豊洲への通勤</strong><br>
+                月1回程度の出社
+            </li>
+            <li>
+                <span class="tag tag-mid">中</span>
+                <strong>5. コストパフォーマンス</strong><br>
+                予算20〜22万に対する初期費用や平米数のバランス
+            </li>
+        </ul>
+    </div>
+
+    <!-- セクション2：物件ランキング -->
+    <h2>2. 物件ランキング</h2>
+
+    <!-- 1位 -->
+    <div class="card rank-1">
+        <div class="card-header">
+            <div class="card-title">👑 1位：クレールなべよこ 8階</div>
+            <div class="evaluation-badges">
+                <span class="eval-badge eval-s">防音: S</span>
+                <span class="eval-badge eval-s">広さ: S</span>
+                <span class="eval-badge eval-a">東京駅: A</span>
+            </div>
+        </div>
+        <div class="property-data">
+            <ul>
+                <li><span class="data-label">最寄り駅</span>丸ノ内線「新中野」駅 徒歩1〜3分</li>
+                <li><span class="data-label">家賃</span>22.0万円 (管理費込)</li>
+                <li><span class="data-label">広さ</span>67.41㎡ / 2LDK</li>
+                <li><span class="data-label">構造</span>SRC造 / 8階 (最上階角部屋)</li>
+            </ul>
+        </div>
+        <div class="comment">
+            防音・広さ・アクセスのすべてを高水準で満たし、唯一矛盾のない真の第1位。「最上階角部屋のSRC造」という最強の防音環境で、22万の予算を出す価値が十分にある大本命。
+        </div>
+        <a href="https://suumo.jp/chintai/bc_100504834562/" class="btn" target="_blank" rel="noopener noreferrer">SUUMOで物件を見る</a>
+    </div>
+
+    <!-- 2位 -->
+    <div class="card rank-2">
+        <div class="card-header">
+            <div class="card-title">🥈 2位：ミリアレジデンス上池袋</div>
+            <div class="evaluation-badges">
+                <span class="eval-badge eval-s">防音: S</span>
+                <span class="eval-badge eval-a">広さ: A</span>
+                <span class="eval-badge eval-b">東京駅: B</span>
+            </div>
+        </div>
+        <div class="property-data">
+            <ul>
+                <li><span class="data-label">最寄り駅</span>埼京線「板橋」駅 徒歩11分 / 東武東上線「北池袋」駅 徒歩7分</li>
+                <li><span class="data-label">家賃</span>約21.8万円 (管理費込)</li>
+                <li><span class="data-label">広さ</span>50〜55㎡ / 2LDK</li>
+                <li><span class="data-label">構造</span>SRC造 / 中層階</li>
+            </ul>
+        </div>
+        <div class="comment">
+            広さでは1位に劣るものの、「完全なSRC防音」を厳守しつつ、エアドア経由で初期費用（仲介手数料無料）を抑えられるコスパ枠として非常に優秀な2番手。
+        </div>
+        <a href="https://airdoor.jp/detail/116092/728721" class="btn" target="_blank" rel="noopener noreferrer">airdoorで物件を見る</a>
+    </div>
+
+    <!-- 3位 -->
+    <div class="card rank-3">
+        <div class="card-header">
+            <div class="card-title">🥉 3位：Ｆ・Ｄ ＶＩＬＬＥ 7階</div>
+            <div class="evaluation-badges">
+                <span class="eval-badge eval-b">防音: B</span>
+                <span class="eval-badge eval-s">広さ: S+</span>
+                <span class="eval-badge eval-s">東京駅: S</span>
+            </div>
+        </div>
+        <div class="property-data">
+            <ul>
+                <li><span class="data-label">最寄り駅</span>JR線「三河島」駅 徒歩4分 / 「日暮里」駅 徒歩12分</li>
+                <li><span class="data-label">家賃</span>約21.5万円 (管理費込)</li>
+                <li><span class="data-label">広さ</span>64.24㎡ / 1SLDK</li>
+                <li><span class="data-label">構造</span>RC造 / 7階</li>
+            </ul>
+        </div>
+        <div class="comment">
+            日暮里経由で東京駅八重洲口まで直通11分と通勤は最強。部屋も広大だが、最優先の「防音性」においてSRC造に一歩譲るためこの順位。
+        </div>
+        <a href="https://suumo.jp/chintai/bc_100436004542/" class="btn" target="_blank" rel="noopener noreferrer">SUUMOで物件を見る</a>
+    </div>
+
+    <!-- 選外 -->
+    <div class="card rank-out">
+        <div class="card-header">
+            <div class="card-title">❌ 選外：新高円寺 2階</div>
+            <div class="evaluation-badges">
+                <span class="eval-badge eval-out">条件未達</span>
+            </div>
+        </div>
+        <div class="property-data">
+            <ul>
+                <li><span class="data-label">最寄り駅</span>丸ノ内線「新高円寺」駅 徒歩1分</li>
+                <li><span class="data-label">家賃</span>21.0万円 (管理費込)</li>
+                <li><span class="data-label">広さ</span>66.1㎡ / 2LDK</li>
+                <li><span class="data-label">構造</span>RC造 / 2階</li>
+            </ul>
+        </div>
+        <div class="comment">
+            月額21万と安く立地も良いが、洋室4.0帖の部屋にベッドと大型デスクの配置が困難なため、今回の絶対条件（広さ）を満たせずランク外。
+        </div>
+        <a href="https://suumo.jp/chintai/bc_100532206804/" class="btn btn-out" target="_blank" rel="noopener noreferrer">SUUMOで確認</a>
+    </div>
+
+    <!-- セクション3：居住年数別の総コスト比較 -->
+    <h2>3. 居住年数別の総コスト比較</h2>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>物件名・特徴</th>
+                    <th>賃料(管理費込)</th>
+                    <th>初期費用(目安)</th>
+                    <th>1年で退去</th>
+                    <th>2年で退去(更新直前)</th>
+                    <th>3年で退去(更新料込)</th>
+                    <th>4年で退去</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ミリアレジデンス上池袋<br><span style="font-size:0.75rem; color:var(--text-light);">エアドア/仲手無料想定</span></td>
+                    <td class="price-col">21.8万円</td>
+                    <td class="price-col">約40万円</td>
+                    <td class="price-col">301.6万円</td>
+                    <td class="price-col text-strong text-danger">563.2万円</td>
+                    <td class="price-col">846.6万円</td>
+                    <td class="price-col">1,108.2万円</td>
+                </tr>
+                <tr class="row-highlight">
+                    <td>クレールなべよこ<br><span style="font-size:0.75rem; color:var(--text-light);">大本命/スペック最高峰</span></td>
+                    <td class="price-col">22.0万円</td>
+                    <td class="price-col">約85万円</td>
+                    <td class="price-col">349.0万円</td>
+                    <td class="price-col text-strong text-danger">613.0万円</td>
+                    <td class="price-col">899.0万円</td>
+                    <td class="price-col">1,163.0万円</td>
+                </tr>
+                <tr>
+                    <td>Ｆ・Ｄ ＶＩＬＬＥ<br><span style="font-size:0.75rem; color:var(--text-light);">日暮里/広さトップクラス</span></td>
+                    <td class="price-col">21.5万円</td>
+                    <td class="price-col">約82万円</td>
+                    <td class="price-col">340.0万円</td>
+                    <td class="price-col">598.0万円</td>
+                    <td class="price-col">877.5万円</td>
+                    <td class="price-col">1,135.5万円</td>
+                </tr>
+                <tr>
+                    <td>新高円寺 2階<br><span style="font-size:0.75rem; color:var(--text-light);">短期違約金あり</span></td>
+                    <td class="price-col">21.0万円</td>
+                    <td class="price-col">約80万円</td>
+                    <td class="price-col">353.0万円<br><span style="font-size:0.7rem;">(※違約金込)</span></td>
+                    <td class="price-col">584.0万円</td>
+                    <td class="price-col">857.0万円</td>
+                    <td class="price-col">1,109.0万円</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- セクション4：話し合いのポイント -->
+    <h2>4. 話し合いのポイント</h2>
+    <div class="summary-box">
+        <ul>
+            <li><strong>「クレールなべよこ」の最強環境に、2年間で＋50万円の価値（実質 月2万円）を見出せるか？</strong></li>
+            <li>2〜3年で引っ越す可能性があるなら、初期費用が安い「ミリアレジデンス」の方が身軽でトータルコストも安い。月額の安さに釣られて初期費用の高い物件を選ぶと損をする。</li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>
